@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
 const RegisterComponent = () => {
@@ -6,6 +7,9 @@ const RegisterComponent = () => {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let [role, setRole] = useState("");
+  let [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleUsername = (e) => {
     setUsername(e.target.value);
@@ -26,16 +30,19 @@ const RegisterComponent = () => {
     AuthService.register(username, email, password, role)
       .then(() => {
         window.alert("Register Success, you will be redirected login page");
+        navigate("/login");
       })
       .catch((e) => {
         console.log(e);
-        Window.alert("Error");
+        // window.alert(e.response.data);
+        setMessage(e.response.data);
       });
   };
 
   return (
     <div style={{ padding: "3rem" }} className="col-md-12">
       <div>
+        {message && <div className="alert alert-danger">{message}</div>}
         <div>
           <label htmlFor="username">UserName:</label>
           <input

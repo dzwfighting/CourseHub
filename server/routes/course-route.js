@@ -29,6 +29,27 @@ router.get("/", async (req, res) => {
   }
 });
 
+// 用instructor ID 寻找其课程
+router.get("/instructor/:_instructor_id", async (req, res) => {
+  let { _instructor_id } = req.params;
+  let coursesFound = await Course.find({ instructor: _instructor_id })
+    .populate("instructor", ["username", "email"])
+    .exec();
+
+  console.log(coursesFound);
+
+  return res.send(coursesFound);
+});
+
+// 用student id寻找注册过的课程
+router.get("/student/:_student_id", async (req, res) => {
+  let { _student_id } = req.params;
+  let coursesFound = await Course.find({ students: _student_id })
+    .populate("instructor", ["username", "email"])
+    .exec();
+  return res.send(coursesFound);
+});
+
 // 用课程id寻找课程
 router.get("/:_id", async (req, res) => {
   let { _id } = req.params;
