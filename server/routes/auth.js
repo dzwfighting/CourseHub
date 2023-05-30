@@ -15,19 +15,24 @@ router.get("/testAPI", (req, res) => {
 
 router.post("/register", async (req, res) => {
   console.log("register");
-  //   console.log(req.body);
+  console.log("req.body: " + req.body);
   //   console.log(registerValidation(req.body));
   let { error } = registerValidation(req.body);
-  //   console.log(error);
+  console.log("this is error: " + error);
   // register check if valid
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) {
+    console.log("in error");
+    return res.status(400).send(error.details[0].message);
+  }
   // check email if laready registed
   const emailExit = await User.findOne({ email: req.body.email });
   if (emailExit) return res.status(400).send("This email already registered");
 
   // make new user
   let { email, username, password, role } = req.body;
+  console.log(email, username, password, role);
   let newUser = new User({ email, username, password, role });
+  console.log(newUser);
   try {
     let savedUser = await newUser.save();
     return res.send({
