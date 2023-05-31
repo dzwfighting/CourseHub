@@ -13,19 +13,20 @@ const EnrollComponent = ({ currentUser, setCurrentUser }) => {
     setSearchInput(e.target.value);
   };
   const handleSearch = () => {
-    CourseService.getCourseByName(searchInput)
+    CourseService.geCourseByName(searchInput)
       .then((data) => {
         console.log(data);
         setSearchResult(data.data);
+        console.log(searchResult);
       })
       .catch((err) => {
         console.log(err);
       });
   };
   const handleEnroll = (e) => {
-    CourseService.enroll(e.target.id, currentUser.user._id)
+    CourseService.enroll(e.target.id)
       .then(() => {
-        window.alert("課程註冊成功。重新導向到課程頁面。");
+        window.alert("Success Register,will redirect to course page");
         navigate("/course");
       })
       .catch((err) => {
@@ -65,25 +66,28 @@ const EnrollComponent = ({ currentUser, setCurrentUser }) => {
       )}
       {currentUser && searchResult && searchResult.length != 0 && (
         <div>
-          <p>我們從 API 返回的數據。</p>
-          {searchResult.map((course) => (
-            <div key={course._id} className="card" style={{ width: "18rem" }}>
-              <div className="card-body">
-                <h5 className="card-title">課程名稱：{course.title}</h5>
-                <p className="card-text">{course.description}</p>
-                <p>價格: {course.price}</p>
-                <p>目前的學生人數: {course.students.length}</p>
-                <a
-                  href="#"
-                  onClick={handleEnroll}
-                  className="card-text btn btn-primary"
-                  id={course._id}
-                >
-                  註冊課程
-                </a>
+          <p>Search Result: </p>
+          {searchResult.map((course) => {
+            return (
+              <div key={course._id} className="card" style={{ width: "18rem" }}>
+                <div className="card-body">
+                  <h5 className="card-title">Course Title: {course.title}</h5>
+                  <p className="card-text">{course.description}</p>
+                  <p>Price: {course.price}</p>
+                  <p>Current Register Number: {course.students.length}</p>
+                  <p>Instructor: {course.instructor.username} </p>
+                  <a
+                    href="#"
+                    onClick={handleEnroll}
+                    className="card-text btn btn-primary"
+                    id={course._id}
+                  >
+                    Register Course
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

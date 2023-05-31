@@ -44,10 +44,42 @@ router.get("/instructor/:_instructor_id", async (req, res) => {
 // 用student id寻找注册过的课程
 router.get("/student/:_student_id", async (req, res) => {
   let { _student_id } = req.params;
+  console.log(_student_id);
   let coursesFound = await Course.find({ students: _student_id })
     .populate("instructor", ["username", "email"])
     .exec();
+  console.log("this is you find's course" + coursesFound);
   return res.send(coursesFound);
+});
+
+// 用课程名称找课程
+router.get("/findByName/:name", async (req, res) => {
+  let { name } = req.params;
+  try {
+    let courseFound = await Course.find({ title: name })
+      .populate("instructor", ["email", "username"])
+      .exec();
+    return res.send(courseFound);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e);
+  }
+});
+
+// 让学生通过course id注册新课程
+router.post("/enroll/:_id", async (req, res) => {
+  let { _id } = req.params;
+  try {
+    console.log("you are in enroll function, the id is: ", _id);
+    let course = await Course.findOne({ _id }).exec();
+    course.students.push(req.user._id);
+    console.log("push the user id in: ", course);
+    await course.save();
+    res.send("Register Success");
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e);
+  }
 });
 
 // 用课程id寻找课程
